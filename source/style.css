@@ -19,6 +19,11 @@
 	color: #599B23;
 }
 
+/* Call status */
+#status-container {
+	text-transform: uppercase;
+}
+
 /* Button styles */
 button {
 	padding: 18px;
