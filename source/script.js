@@ -10,8 +10,8 @@ var lastDurationSeconds = null;
 
 // If the platform is not Android, then the calling function will not be supported.
 if (!isAndroid) {
-    btnCallPhone.disabled = true; // disable the call button
-    featureNotSupportedContainer.classList.remove("hidden"); // show the warning message
+    btnCallPhone.disabled = true; // Disable the call button.
+    featureNotSupportedContainer.classList.remove("hidden"); // Show the warning message.
 }
 
 // Format seconds in the mm:ss or hh:mm:ss format.
@@ -46,10 +46,10 @@ function setUpCall() {
 }
 
 function updateCallUI() {
-    // get status about the call.
+    // Get status about the call.
     var callInfo = getOnGoingCallInfo();
 
-    // call no longer active.
+    // Call is no longer active.
     if (callInfo === null) {
         clearInterval(timer);
         timer = null;
@@ -59,7 +59,7 @@ function updateCallUI() {
         btnCallPhone.classList.remove("hidden");
         btnHangUp.classList.add("hidden");
     }
-    // call still active.
+    // Call is still active.
     else {
         lastDurationSeconds = callInfo.durationInSeconds;
         if (callInfo.status === "Dialing") {
@@ -73,7 +73,7 @@ function updateCallUI() {
     }
 }
 
-// when loading, if there's an active call in progress, make sure to update UI.
+// When loading, if there's an active call in progress, make sure to update UI.
 if (getOnGoingCallInfo() !== null) {
     setUpCall();
     updateCallUI();
@@ -83,28 +83,27 @@ if (getOnGoingCallInfo() !== null) {
     callDurationContainer.innerHTML = "";
 }
 
-// define what the "CALL" button does
+// Define what the "CALL" button does.
 btnCallPhone.onclick = function () {
     if (isAndroid) {
-        // There's already an on-going call, so do nothing.
+        // There's already an ongoing call, so do nothing.
         if (timer !== null) {
-            console.log("Call already active. Skipping...");
             return;
         }
-        // set the parameters for the intent
+        // Set the parameters for the intent.
         var params = {
             phone_number: phoneNumber
         };
-        // make the phone call.
+        // Make the phone call.
         makePhoneCall(params, function (error) {
-            // some error occurred.
+            // Some error occurred.
             if (error) {
                 statusContainer.parentElement.classList.remove("text-green");
                 statusContainer.innerHTML = error;
                 callDurationContainer.innerHTML = "";
                 return;
             }
-            // update the UI.
+            // Update the UI.
             setUpCall();
             statusContainer.parentElement.classList.remove("text-green");
             statusContainer.innerHTML = "Connecting...";
@@ -113,7 +112,7 @@ btnCallPhone.onclick = function () {
     }
 };
 
-// define what the "END CALL" button does
+// Define what the "END CALL" button does.
 btnHangUp.onclick = function () {
     hangUpOnGoingCall();
 };
