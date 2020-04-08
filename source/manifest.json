@@ -1,0 +1,6 @@
+{
+	"name" : "Phone call",
+	"author" : "Dobility",
+	"version": "1.0.1",
+	"supportedFieldTypes": ["text"]
+}

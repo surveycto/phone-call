@@ -1,0 +1,66 @@
+/* Global styles */
+.container {
+	padding: 0 .5rem;
+}
+.row {
+	display: flex;
+	margin: 16px 0;
+}
+.center {
+	text-align: center;
+	justify-content: center;
+}
+.hidden {
+	display: none;
+}
+
+/* Text styles */
+.text-green {
+	color: #599B23;
+}
+
+/* Button styles */
+button {
+	padding: 18px;
+	border: 0px solid rgba(0,0,0,0);
+	border-radius: 28px;
+	box-shadow: 0 4px 5px rgba(0,0,0,.14),
+				0 1px 10px rgba(0,0,0,.12),
+				0 2px 4px -1px rgba(0,0,0,.2);
+	-webkit-tap-highlight-color: rgba(0,0,0,0);
+	outline: none;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+button>* {
+	margin: 0 10px;
+}
+button .icon {
+	width: 18px;
+	height: 18px;
+}
+button.btn-primary {
+	color: white;
+	background-color: #047CC2;
+}
+button.btn-primary .icon * {
+	fill: white;
+}
+button.btn-danger {
+	color: white;
+	background-color: #B00020;
+}
+button.btn-danger .icon * {
+	fill: white;
+}
+button:active {
+	position:relative;
+	top:1px;
+}
+button:disabled {
+	opacity: 0.5
+}
+
+
