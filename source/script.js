@@ -10,16 +10,22 @@ var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 var btnCallPhone = document.getElementById('btn-call-phone')
 var statusContainer = document.getElementById('status-container')
 var callDurationContainer = document.getElementById('call-duration')
-var featureNotSupportedContainer = document.getElementById('feature-not-supported-container')
+var errorMsgContainer = document.getElementById('error-message-container')
+var errorMsg = document.getElementById('error-message')
 
 // Set up other vars
 var timer = null
 var lastDurationSeconds = null
 
-// If the platform is not Android, then the calling function will not be supported.
-if (!isAndroid) {
+// Error cases
+if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
   btnCallPhone.disabled = true // Disable the call button.
-  featureNotSupportedContainer.classList.remove('hidden') // Show the warning message.
+  errorMsg.innerHTML = 'Sorry, the phone call feature is only supported on Android. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
+  errorMsgContainer.classList.remove('hidden') // Show the error message.
+} else if ( !phoneNumber || phoneNumber.length<1 ) { // If there is no phone number provided, then we won't be able to make a call.
+  btnCallPhone.disabled = true
+  errorMsg.innerHTML = 'Sorry, there was no phone number provided, so a call cannot be made.'
+  errorMsgContainer.classList.remove('hidden')
 }
 
 // Format seconds in the mm:ss or hh:mm:ss format.
