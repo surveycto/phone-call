@@ -56,8 +56,7 @@ function updateCallUI () {
   // Get status about the call.
   var callInfo = getOnGoingCallInfo()
 
-  // Call is no longer active.
-  if (callInfo === null) {
+  if (callInfo === null) { // Call is no longer active.
     clearInterval(timer)
     timer = null
     statusContainer.parentElement.classList.remove('text-green')
@@ -65,9 +64,7 @@ function updateCallUI () {
     callDurationContainer.innerHTML = ' (' + formatDuration(lastDurationSeconds) + ')'
     btnCallPhone.classList.remove('hidden')
     btnHangUp.classList.add('hidden')
-  }
-  // Call is still active.
-  else {
+  } else { // Call is still active.
     lastDurationSeconds = callInfo.durationInSeconds
     if (callInfo.status === 'Dialing') {
       statusContainer.parentElement.classList.remove('text-green')
