@@ -47,7 +47,6 @@ function formatDuration (totalSeconds) {
 
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
-  btnHangUp.classList.remove('hidden')
   lastDurationSeconds = 0
   timer = setInterval(updateCallUI, 1000)
 }
@@ -63,7 +62,6 @@ function updateCallUI () {
     statusContainer.innerHTML = 'Call ended'
     callDurationContainer.innerHTML = ' (' + formatDuration(lastDurationSeconds) + ')'
     btnCallPhone.classList.remove('hidden')
-    btnHangUp.classList.add('hidden')
   } else { // Call is still active.
     lastDurationSeconds = callInfo.durationInSeconds
     if (callInfo.status === 'Dialing') {
@@ -114,9 +112,4 @@ btnCallPhone.onclick = function () {
       callDurationContainer.innerHTML = ' (' + formatDuration(lastDurationSeconds) + ')'
     })
   }
-}
-
-// Define what the 'END CALL' button does.
-btnHangUp.onclick = function () {
-  hangUpOnGoingCall()
 }
