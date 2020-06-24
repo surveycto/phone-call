@@ -9,52 +9,22 @@ var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 // Get UI elements
 var btnCallPhone = document.getElementById('btn-call-phone')
 var statusContainer = document.getElementById('status-container')
-var callDurationContainer = document.getElementById('call-duration')
 var errorMsgContainer = document.getElementById('error-message-container')
 var errorMsg = document.getElementById('error-message')
-
-// Set up other vars
-var timer = null
-var lastDurationSeconds = null
 
 // Error cases
 if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
   btnCallPhone.disabled = true // Disable the call button.
   errorMsg.innerHTML = 'Sorry, the phone call feature is only supported on Android. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
   errorMsgContainer.classList.remove('hidden') // Show the error message.
-} else if ( !phoneNumber || phoneNumber.length<1 ) { // If there is no phone number provided, then we won't be able to make a call.
+} else if (!phoneNumber || phoneNumber.length < 1) { // If there is no phone number provided, then we won't be able to make a call.
   btnCallPhone.disabled = true
   errorMsg.innerHTML = 'Sorry, there was no phone number provided, so a call cannot be made.'
   errorMsgContainer.classList.remove('hidden')
 }
 
-// Format seconds in the mm:ss or hh:mm:ss format.
-function formatDuration (totalSeconds) {
-  var hours = Math.floor(totalSeconds / 3600)
-  var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60)
-  var seconds = totalSeconds - (hours * 3600) - (minutes * 60)
-
-  if (minutes < 10) {
-    minutes = '0' + minutes
-  }
-  if (seconds < 10) {
-    seconds = '0' + seconds
-  }
-
-  if (hours > 0) {
-    if (hours < 10) {
-      hours = '0' + hours
-    }
-    return hours + ':' + minutes + ':' + seconds
-  } else {
-    return minutes + ':' + seconds
-  }
-}
-
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
-  lastDurationSeconds = 0
-  timer = setInterval(updateCallUI, 1000)
 }
 
 function updateCallUI () {
@@ -62,14 +32,10 @@ function updateCallUI () {
   var callInfo = getOnGoingCallInfo()
 
   if (callInfo === null) { // Call is no longer active.
-    clearInterval(timer)
-    timer = null
     statusContainer.parentElement.classList.remove('text-green')
     statusContainer.innerHTML = 'Call ended'
-    callDurationContainer.innerHTML = ' (' + formatDuration(lastDurationSeconds) + ')'
     btnCallPhone.classList.remove('hidden')
   } else { // Call is still active.
-    lastDurationSeconds = callInfo.durationInSeconds
     if (callInfo.status === 'Dialing') {
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
@@ -77,7 +43,6 @@ function updateCallUI () {
       statusContainer.parentElement.classList.add('text-green')
       statusContainer.innerHTML = 'Connected'
     }
-    callDurationContainer.innerHTML = ' (' + formatDuration(lastDurationSeconds) + ')'
   }
 }
 
@@ -88,16 +53,11 @@ if (getOnGoingCallInfo() !== null) {
 } else {
   statusContainer.parentElement.classList.add('text-green')
   statusContainer.innerHTML = 'Ready to call'
-  callDurationContainer.innerHTML = ''
 }
 
 // Define what the 'CALL' button does.
 btnCallPhone.onclick = function () {
   if (isAndroid) {
-    // There's already an ongoing call, so do nothing.
-    if (timer !== null) {
-      return
-    }
     // Set the parameters for the intent.
     var params = {
       phone_number: phoneNumber
@@ -108,14 +68,12 @@ btnCallPhone.onclick = function () {
       if (error) {
         statusContainer.parentElement.classList.remove('text-green')
         statusContainer.innerHTML = error
-        callDurationContainer.innerHTML = ''
         return
       }
       // Update the UI.
       setUpCall()
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
-      callDurationContainer.innerHTML = ' (' + formatDuration(lastDurationSeconds) + ')'
     })
   }
 }
