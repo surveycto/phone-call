@@ -1,3 +1,5 @@
+/* global getPluginParameter, setAnswer, makePhoneCall, getPhoneCallStatus */
+
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 var phoneNumber = getPluginParameter('phone_number')
 var btnCallPhone = document.getElementById('btn-call-phone')
