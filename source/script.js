@@ -1,12 +1,18 @@
 /* global getPluginParameter, setAnswer, makePhoneCall, getPhoneCallStatus */
 
-var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
+// Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
+
+// Get information about the current device
+var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
+
+// Get UI elements
 var btnCallPhone = document.getElementById('btn-call-phone')
-var btnHangUp = document.getElementById('btn-hang-up')
 var statusContainer = document.getElementById('status-container')
 var callDurationContainer = document.getElementById('call-duration')
 var featureNotSupportedContainer = document.getElementById('feature-not-supported-container')
+
+// Set up other vars
 var timer = null
 var lastDurationSeconds = null
 
@@ -17,10 +23,10 @@ if (!isAndroid) {
 }
 
 // Format seconds in the mm:ss or hh:mm:ss format.
-function formatDuration(total_seconds) {
-  var hours = Math.floor(total_seconds / 3600)
-  var minutes = Math.floor((total_seconds - (hours * 3600)) / 60)
-  var seconds = total_seconds - (hours * 3600) - (minutes * 60)
+function formatDuration (totalSeconds) {
+  var hours = Math.floor(totalSeconds / 3600)
+  var minutes = Math.floor((totalSeconds - (hours * 3600)) / 60)
+  var seconds = totalSeconds - (hours * 3600) - (minutes * 60)
 
   if (minutes < 10) {
     minutes = '0' + minutes
