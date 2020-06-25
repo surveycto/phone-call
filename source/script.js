@@ -2,6 +2,8 @@
 
 // Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
+var phoneNumberLabel = getPluginParameter('phone_number_label');
+var hidePhoneNumber = getPluginParameter('hide_phone_number');
 
 // Get information about the current device
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
@@ -60,7 +62,9 @@ btnCallPhone.onclick = function () {
   if (isAndroid) {
     // Set the parameters for the intent.
     var params = {
-      phone_number: phoneNumber
+      phone_number: phoneNumber,
+      phone_number_label: phoneNumberLabel,
+      hide_phone_number: hidePhoneNumber
     }
     // Make the phone call.
     makePhoneCall(params, function (error) {
