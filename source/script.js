@@ -29,17 +29,17 @@ function setUpCall () {
 
 function updateCallUI () {
   // Get status about the call.
-  var callInfo = getOnGoingCallInfo()
+  var phoneCallStatus = getPhoneCallStatus();
 
-  if (callInfo === null) { // Call is no longer active.
+  if (phoneCallStatus === null) { // Call is no longer active.
     statusContainer.parentElement.classList.remove('text-green')
     statusContainer.innerHTML = 'Call ended'
     btnCallPhone.classList.remove('hidden')
   } else { // Call is still active.
-    if (callInfo.status === 'Dialing') {
+    if (phoneCallStatus === 'Dialing') {
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
-    } else if (callInfo.status === 'Active') {
+    } else if (phoneCallStatus === 'Active') {
       statusContainer.parentElement.classList.add('text-green')
       statusContainer.innerHTML = 'Connected'
     }
@@ -47,7 +47,7 @@ function updateCallUI () {
 }
 
 // When loading, if there's an active call in progress, make sure to update UI.
-if (getOnGoingCallInfo() !== null) {
+if (getPhoneCallStatus() !== null) {
   setUpCall()
   updateCallUI()
 } else {
