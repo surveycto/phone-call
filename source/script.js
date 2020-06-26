@@ -39,14 +39,12 @@ function setUpCall () {
 }
 
 function updateCallUI () {
-  // Get status about the call.
-  var phoneCallStatus = getPhoneCallStatus();
-
-  if (phoneCallStatus === null) { // Call is no longer active.
+  var phoneCallStatus = getPhoneCallStatus() // Get the current call status.
+  if (phoneCallStatus === null) { // There is no active phone call.
     statusContainer.parentElement.classList.remove('text-green')
     statusContainer.innerHTML = 'Call ended'
     btnCallPhone.classList.remove('hidden')
-  } else { // Call is still active.
+  } else { // There is an active phone call.
     if (phoneCallStatus === 'Dialing') {
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
@@ -69,7 +67,7 @@ if (getPhoneCallStatus() !== null) {
 // Define what the 'CALL' button does.
 btnCallPhone.onclick = function () {
   if (isAndroid) {
-    // Set the parameters for the intent.
+    // Set the parameters for the call.
     var params = {
       phone_number: phoneNumber,
       phone_number_label: phoneNumberLabel,
@@ -83,7 +81,7 @@ btnCallPhone.onclick = function () {
         statusContainer.innerHTML = error
         return
       }
-      // Update the UI.
+      // Update the call UI every second.
       setUpCall()
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
