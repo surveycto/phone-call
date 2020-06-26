@@ -15,6 +15,9 @@ var statusContainer = document.getElementById('status-container')
 var errorMsgContainer = document.getElementById('error-message-container')
 var errorMsg = document.getElementById('error-message')
 
+// Set up other vars
+var timer = null;
+
 // Error cases
 if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
   btnCallPhone.disabled = true // Disable the call button.
@@ -36,11 +39,13 @@ if (phoneNumber && hidePhoneNumber !== 1 && !phoneNumberLabel) {
 }
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
+  timer = setInterval(updateCallUI, 1000)
 }
 
 function updateCallUI () {
   var phoneCallStatus = getPhoneCallStatus() // Get the current call status.
   if (phoneCallStatus === null) { // There is no active phone call.
+    clearInterval(timer)
     statusContainer.parentElement.classList.remove('text-green')
     statusContainer.innerHTML = 'Call ended'
     btnCallPhone.classList.remove('hidden')
