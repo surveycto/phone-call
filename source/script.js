@@ -9,6 +9,7 @@ var hidePhoneNumber = getPluginParameter('hide_phone_number');
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 
 // Get UI elements
+var targetPhoneNum = document.getElementById('target-phone-number')
 var btnCallPhone = document.getElementById('btn-call-phone')
 var statusContainer = document.getElementById('status-container')
 var errorMsgContainer = document.getElementById('error-message-container')
@@ -25,6 +26,14 @@ if (!isAndroid) { // If the platform is not Android, then the calling function w
   errorMsgContainer.classList.remove('hidden')
 }
 
+// Show where the call is going, based on the parameters.
+if (phoneNumber && hidePhoneNumber !== 1 && !phoneNumberLabel) {
+  targetPhoneNum.innerHTML = phoneNumber // This is the default case. Show the destination phone number. 
+} else if (phoneNumber && phoneNumberLabel) {
+  targetPhoneNum.innerHTML = phoneNumberLabel // If the phone_number_label has been provided, show that instead of the phone number.
+} else if (phoneNumber && hidePhoneNumber === 1 && !phoneNumberLabel) {
+  targetPhoneNum.innerHTML = '*********' // If hide_phone_number is set to 1 but there is no phone_number_label provided, just show asterisks.
+}
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
 }

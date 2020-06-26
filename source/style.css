@@ -19,6 +19,12 @@
 	color: #599B23;
 }
 
+/* Destination */
+#target-phone-number {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
 /* Call status */
 #status-container {
 	text-transform: uppercase;
