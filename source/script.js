@@ -1,118 +1,90 @@
-var isAndroid = (document.body.className.indexOf("android-collect") >= 0);
-var phoneNumber = getPluginParameter('phone_number');
-var btnCallPhone = document.getElementById('btn-call-phone');
-var btnHangUp = document.getElementById('btn-hang-up');
-var statusContainer = document.getElementById('status-container');
-var callDurationContainer = document.getElementById('call-duration');
-var featureNotSupportedContainer = document.getElementById('feature-not-supported-container');
-var timer = null;
-var lastDurationSeconds = null;
+/* global getPluginParameter, setAnswer, makePhoneCall, getPhoneCallStatus */
 
-// If the platform is not Android, then the calling function will not be supported.
-if (!isAndroid) {
-    btnCallPhone.disabled = true; // Disable the call button.
-    featureNotSupportedContainer.classList.remove("hidden"); // Show the warning message.
+// Get parameters info from the form definition
+var phoneNumber = getPluginParameter('phone_number')
+var phoneNumberLabel = getPluginParameter('phone_number_label');
+var hidePhoneNumber = getPluginParameter('hide_phone_number');
+
+// Get information about the current device
+var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
+
+// Get UI elements
+var targetPhoneNum = document.getElementById('target-phone-number')
+var btnCallPhone = document.getElementById('btn-call-phone')
+var statusContainer = document.getElementById('status-container')
+var errorMsgContainer = document.getElementById('error-message-container')
+var errorMsg = document.getElementById('error-message')
+
+// Error cases
+if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
+  btnCallPhone.disabled = true // Disable the call button.
+  errorMsg.innerHTML = 'Sorry, the phone call feature is only supported on Android. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
+  errorMsgContainer.classList.remove('hidden') // Show the error message.
+} else if (!phoneNumber || phoneNumber.length < 1) { // If there is no phone number provided, then we won't be able to make a call.
+  btnCallPhone.disabled = true
+  errorMsg.innerHTML = 'Sorry, there was no phone number provided, so a call cannot be made.'
+  errorMsgContainer.classList.remove('hidden')
 }
 
-// Format seconds in the mm:ss or hh:mm:ss format.
-function formatDuration(total_seconds) {
-    var hours = Math.floor(total_seconds / 3600);
-    var minutes = Math.floor((total_seconds - (hours * 3600)) / 60);
-    var seconds = total_seconds - (hours * 3600) - (minutes * 60);
-
-    if (minutes < 10) {
-        minutes = "0" + minutes;
-    }
-    if (seconds < 10) {
-        seconds = "0" + seconds;
-    }
-
-    if (hours > 0) {
-        if (hours < 10) {
-            hours = "0" + hours;
-        }
-        return hours + ':' + minutes + ':' + seconds;
-
-    } else {
-        return minutes + ':' + seconds;
-    }
+// Show where the call is going, based on the parameters.
+if (phoneNumber && hidePhoneNumber !== 1 && !phoneNumberLabel) {
+  targetPhoneNum.innerHTML = phoneNumber // This is the default case. Show the destination phone number. 
+} else if (phoneNumber && phoneNumberLabel) {
+  targetPhoneNum.innerHTML = phoneNumberLabel // If the phone_number_label has been provided, show that instead of the phone number.
+} else if (phoneNumber && hidePhoneNumber === 1 && !phoneNumberLabel) {
+  targetPhoneNum.innerHTML = '*********' // If hide_phone_number is set to 1 but there is no phone_number_label provided, just show asterisks.
+}
+function setUpCall () {
+  btnCallPhone.classList.add('hidden')
 }
 
-function setUpCall() {
-    btnCallPhone.classList.add("hidden");
-    btnHangUp.classList.remove("hidden");
-    lastDurationSeconds = 0;
-    timer = setInterval(updateCallUI, 1000);
-}
-
-function updateCallUI() {
-    // Get status about the call.
-    var callInfo = getOnGoingCallInfo();
-
-    // Call is no longer active.
-    if (callInfo === null) {
-        clearInterval(timer);
-        timer = null;
-        statusContainer.parentElement.classList.remove("text-green");
-        statusContainer.innerHTML = "Call ended";
-        callDurationContainer.innerHTML = " (" + formatDuration(lastDurationSeconds) + ")";
-        btnCallPhone.classList.remove("hidden");
-        btnHangUp.classList.add("hidden");
+function updateCallUI () {
+  var phoneCallStatus = getPhoneCallStatus() // Get the current call status.
+  if (phoneCallStatus === null) { // There is no active phone call.
+    statusContainer.parentElement.classList.remove('text-green')
+    statusContainer.innerHTML = 'Call ended'
+    btnCallPhone.classList.remove('hidden')
+  } else { // There is an active phone call.
+    if (phoneCallStatus === 'Dialing') {
+      statusContainer.parentElement.classList.remove('text-green')
+      statusContainer.innerHTML = 'Connecting...'
+    } else if (phoneCallStatus === 'Active') {
+      statusContainer.parentElement.classList.add('text-green')
+      statusContainer.innerHTML = 'Connected'
     }
-    // Call is still active.
-    else {
-        lastDurationSeconds = callInfo.durationInSeconds;
-        if (callInfo.status === "Dialing") {
-            statusContainer.parentElement.classList.remove("text-green");
-            statusContainer.innerHTML = "Connecting...";
-        } else if (callInfo.status === "Active") {
-            statusContainer.parentElement.classList.add("text-green");
-            statusContainer.innerHTML = "Connected";
-        }
-        callDurationContainer.innerHTML = " (" + formatDuration(lastDurationSeconds) + ")";
-    }
+  }
 }
 
 // When loading, if there's an active call in progress, make sure to update UI.
-if (getOnGoingCallInfo() !== null) {
-    setUpCall();
-    updateCallUI();
+if (getPhoneCallStatus() !== null) {
+  setUpCall()
+  updateCallUI()
 } else {
-    statusContainer.parentElement.classList.add("text-green");
-    statusContainer.innerHTML = "Ready to call";
-    callDurationContainer.innerHTML = "";
+  statusContainer.parentElement.classList.add('text-green')
+  statusContainer.innerHTML = 'Ready to call'
 }
 
-// Define what the "CALL" button does.
+// Define what the 'CALL' button does.
 btnCallPhone.onclick = function () {
-    if (isAndroid) {
-        // There's already an ongoing call, so do nothing.
-        if (timer !== null) {
-            return;
-        }
-        // Set the parameters for the intent.
-        var params = {
-            phone_number: phoneNumber
-        };
-        // Make the phone call.
-        makePhoneCall(params, function (error) {
-            // Some error occurred.
-            if (error) {
-                statusContainer.parentElement.classList.remove("text-green");
-                statusContainer.innerHTML = error;
-                callDurationContainer.innerHTML = "";
-                return;
-            }
-            // Update the UI.
-            setUpCall();
-            statusContainer.parentElement.classList.remove("text-green");
-            statusContainer.innerHTML = "Connecting...";
-            callDurationContainer.innerHTML = " (" + formatDuration(lastDurationSeconds) + ")";
-        });
+  if (isAndroid) {
+    // Set the parameters for the call.
+    var params = {
+      phone_number: phoneNumber,
+      phone_number_label: phoneNumberLabel,
+      hide_phone_number: hidePhoneNumber
     }
-};
-
-// Define what the "END CALL" button does.
-btnHangUp.onclick = function () {
-    hangUpOnGoingCall();
-};
+    // Make the phone call.
+    makePhoneCall(params, function (error) {
+      // Some error occurred.
+      if (error) {
+        statusContainer.parentElement.classList.remove('text-green')
+        statusContainer.innerHTML = error
+        return
+      }
+      // Update the call UI every second.
+      setUpCall()
+      statusContainer.parentElement.classList.remove('text-green')
+      statusContainer.innerHTML = 'Connecting...'
+    })
+  }
+}
