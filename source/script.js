@@ -2,8 +2,8 @@
 
 // Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
-var phoneNumberLabel = getPluginParameter('phone_number_label');
-var hidePhoneNumber = getPluginParameter('hide_phone_number');
+var phoneNumberLabel = getPluginParameter('phone_number_label')
+var hidePhoneNumber = getPluginParameter('hide_phone_number')
 
 // Get information about the current device
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
@@ -26,14 +26,19 @@ if (!isAndroid) { // If the platform is not Android, then the calling function w
   errorMsgContainer.classList.remove('hidden')
 }
 
-// Show where the call is going, based on the parameters.
-if (phoneNumber && hidePhoneNumber !== 1 && !phoneNumberLabel) {
-  targetPhoneNum.innerHTML = phoneNumber // This is the default case. Show the destination phone number. 
-} else if (phoneNumber && phoneNumberLabel) {
-  targetPhoneNum.innerHTML = phoneNumberLabel // If the phone_number_label has been provided, show that instead of the phone number.
-} else if (phoneNumber && hidePhoneNumber === 1 && !phoneNumberLabel) {
-  targetPhoneNum.innerHTML = '*********' // If hide_phone_number is set to 1 but there is no phone_number_label provided, just show asterisks.
+// Show where the call is going. Hide the phone number as needed, based on the parameters.
+if (phoneNumber) {
+  if (hidePhoneNumber === 1 || hidePhoneNumber === '1') {
+    if (!phoneNumberLabel || phoneNumberLabel.length < 1) {
+      targetPhoneNum.innerHTML = '(Number hidden)' // If hide_phone_number is set to 1 but there is no phone_number_label provided, show '(Number hidden)'.
+    }
+  } else if (phoneNumberLabel) {
+    targetPhoneNum.innerHTML = phoneNumberLabel // Otherwise, show the phone_number_label.
+  } else {
+    targetPhoneNum.innerHTML = phoneNumber // The default case is to just show the destination phone number.
+  }
 }
+
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
 }
