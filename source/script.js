@@ -63,7 +63,7 @@ function updateCallUI () {
 }
 
 // When loading, if there's an active call in progress, make sure to update UI.
-if (getPhoneCallStatus() !== null) {
+if (getPhoneCallStatus() !== -1) {
   setUpCall()
   updateCallUI()
 } else {
