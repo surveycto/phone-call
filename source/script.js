@@ -35,9 +35,9 @@ if (phoneNumber) {
   if (hidePhoneNumber === 1 || hidePhoneNumber === '1') {
     if (!phoneNumberLabel || phoneNumberLabel.length < 1) {
       targetPhoneNum.innerHTML = '(Number hidden)' // If hide_phone_number is set to 1 but there is no phone_number_label provided, show '(Number hidden)'.
+    } else {
+      targetPhoneNum.innerHTML = phoneNumberLabel // Otherwise, show the phone_number_label.
     }
-  } else if (phoneNumberLabel) {
-    targetPhoneNum.innerHTML = phoneNumberLabel // Otherwise, show the phone_number_label.
   } else {
     targetPhoneNum.innerHTML = phoneNumber // The default case is to just show the destination phone number.
   }
