@@ -2,8 +2,8 @@
 
 // Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
-var phoneNumberLabel = getPluginParameter('phone_number_label');
-var hidePhoneNumber = getPluginParameter('hide_phone_number');
+var phoneNumberLabel = getPluginParameter('phone_number_label')
+var hidePhoneNumber = getPluginParameter('hide_phone_number')
 
 // Get information about the current device
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
@@ -12,11 +12,12 @@ var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 var targetPhoneNum = document.getElementById('target-phone-number')
 var btnCallPhone = document.getElementById('btn-call-phone')
 var statusContainer = document.getElementById('status-container')
+var currentCallStatus = 'Ready to call'
 var errorMsgContainer = document.getElementById('error-message-container')
 var errorMsg = document.getElementById('error-message')
 
 // Set up other vars
-var timer = null;
+var timer = null
 
 // Error cases
 if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
@@ -29,39 +30,40 @@ if (!isAndroid) { // If the platform is not Android, then the calling function w
   errorMsgContainer.classList.remove('hidden')
 }
 
-// Show where the call is going, based on the parameters.
-if (phoneNumber && hidePhoneNumber !== 1 && !phoneNumberLabel) {
-  targetPhoneNum.innerHTML = phoneNumber // This is the default case. Show the destination phone number. 
-} else if (phoneNumber && phoneNumberLabel) {
-  targetPhoneNum.innerHTML = phoneNumberLabel // If the phone_number_label has been provided, show that instead of the phone number.
-} else if (phoneNumber && hidePhoneNumber === 1 && !phoneNumberLabel) {
-  targetPhoneNum.innerHTML = '*********' // If hide_phone_number is set to 1 but there is no phone_number_label provided, just show asterisks.
+// Show where the call is going. Hide the phone number as needed, based on the parameters.
+if (phoneNumber) {
+  if (hidePhoneNumber === 1 || hidePhoneNumber === '1') {
+    if (!phoneNumberLabel || phoneNumberLabel.length < 1) {
+      targetPhoneNum.innerHTML = '(Number hidden)' // If hide_phone_number is set to 1 but there is no phone_number_label provided, show '(Number hidden)'.
+    } else {
+      targetPhoneNum.innerHTML = phoneNumberLabel // Otherwise, show the phone_number_label.
+    }
+  } else {
+    targetPhoneNum.innerHTML = phoneNumber // The default case is to just show the destination phone number.
+  }
 }
+
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
   timer = setInterval(updateCallUI, 1000)
 }
 
 function updateCallUI () {
-  var phoneCallStatus = getPhoneCallStatus() // Get the current call status.
-  if (phoneCallStatus === null) { // There is no active phone call.
-    clearInterval(timer)
-    statusContainer.parentElement.classList.remove('text-green')
-    statusContainer.innerHTML = 'Call ended'
-    btnCallPhone.classList.remove('hidden')
-  } else { // There is an active phone call.
-    if (phoneCallStatus === 'Dialing') {
-      statusContainer.parentElement.classList.remove('text-green')
-      statusContainer.innerHTML = 'Connecting...'
-    } else if (phoneCallStatus === 'Active') {
-      statusContainer.parentElement.classList.add('text-green')
-      statusContainer.innerHTML = 'Connected'
-    }
+  updateCurrentCallStatus()
+  statusContainer.innerHTML = currentCallStatus
+  var currentCallStatusCode = getPhoneCallStatus()
+  if (currentCallStatusCode === 1 || currentCallStatusCode === 9 || currentCallStatusCode === 10) {
+    btnCallPhone.classList.add('hidden') // If the call state is dialing, connecting, or disconnecting, then hide the Call button.
+  } else {
+    btnCallPhone.classList.remove('hidden') // If the call state is not one of those three, make sure the call button is shown.
+  }
+  if (currentCallStatusCode === 7) {
+    clearInterval(timer) // If the call is disconnected, we no longer need to update the UI every second.
   }
 }
 
 // When loading, if there's an active call in progress, make sure to update UI.
-if (getPhoneCallStatus() !== null) {
+if (getPhoneCallStatus() !== -1) {
   setUpCall()
   updateCallUI()
 } else {
@@ -91,5 +93,31 @@ btnCallPhone.onclick = function () {
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
     })
+  }
+}
+
+// Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
+function updateCurrentCallStatus () {
+  switch (getPhoneCallStatus()) {
+    case -1:
+      currentCallStatus = 'Ready to make a call'
+      break
+    case 0:
+      currentCallStatus = 'Connected'
+      break
+    case 1:
+      currentCallStatus = 'Dialing...'
+      break
+    case 7:
+      currentCallStatus = 'Disconnected'
+      break
+    case 9:
+      currentCallStatus = 'Connecting...'
+      break
+    case 10:
+      currentCallStatus = 'Disconnecting...'
+      break
+    default:
+      currentCallStatus = 'Unable to retrieve call status'
   }
 }
