@@ -99,6 +99,9 @@ btnCallPhone.onclick = function () {
 // Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
 function updateCurrentCallStatus () {
   switch (getPhoneCallStatus()) {
+    case -1:
+      currentCallStatus = 'Ready to make a call'
+      break
     case 0:
       currentCallStatus = 'Connected'
       break
