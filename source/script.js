@@ -16,6 +16,9 @@ var currentCallStatus = 'Ready to call'
 var errorMsgContainer = document.getElementById('error-message-container')
 var errorMsg = document.getElementById('error-message')
 
+// Set up other vars
+var timer = null
+
 // Error cases
 if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
   btnCallPhone.disabled = true // Disable the call button.
@@ -42,6 +45,7 @@ if (phoneNumber) {
 
 function setUpCall () {
   btnCallPhone.classList.add('hidden')
+  timer = setInterval(updateCallUI, 1000)
 }
 
 function updateCallUI () {
@@ -52,6 +56,9 @@ function updateCallUI () {
     btnCallPhone.classList.add('hidden') // If the call state is dialing, connecting, or disconnecting, then hide the Call button.
   } else {
     btnCallPhone.classList.remove('hidden') // If the call state is not one of those three, make sure the call button is shown.
+  }
+  if (currentCallStatusCode === 7) {
+    clearInterval(timer) // If the call is disconnected, we no longer need to update the UI every second.
   }
 }
 
