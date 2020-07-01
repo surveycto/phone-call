@@ -12,6 +12,7 @@ var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 var targetPhoneNum = document.getElementById('target-phone-number')
 var btnCallPhone = document.getElementById('btn-call-phone')
 var statusContainer = document.getElementById('status-container')
+var currentCallStatus = 'Ready to call'
 var errorMsgContainer = document.getElementById('error-message-container')
 var errorMsg = document.getElementById('error-message')
 
@@ -44,19 +45,13 @@ function setUpCall () {
 }
 
 function updateCallUI () {
-  var phoneCallStatus = getPhoneCallStatus() // Get the current call status.
-  if (phoneCallStatus === null) { // There is no active phone call.
-    statusContainer.parentElement.classList.remove('text-green')
-    statusContainer.innerHTML = 'Call ended'
-    btnCallPhone.classList.remove('hidden')
-  } else { // There is an active phone call.
-    if (phoneCallStatus === 'Dialing') {
-      statusContainer.parentElement.classList.remove('text-green')
-      statusContainer.innerHTML = 'Connecting...'
-    } else if (phoneCallStatus === 'Active') {
-      statusContainer.parentElement.classList.add('text-green')
-      statusContainer.innerHTML = 'Connected'
-    }
+  updateCurrentCallStatus()
+  statusContainer.innerHTML = currentCallStatus
+  var currentCallStatusCode = getPhoneCallStatus()
+  if (currentCallStatusCode === 1 || currentCallStatusCode === 9 || currentCallStatusCode === 10) {
+    btnCallPhone.classList.add('hidden') // If the call state is dialing, connecting, or disconnecting, then hide the Call button.
+  } else {
+    btnCallPhone.classList.remove('hidden') // If the call state is not one of those three, make sure the call button is shown.
   }
 }
 
@@ -91,5 +86,28 @@ btnCallPhone.onclick = function () {
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
     })
+  }
+}
+
+// Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
+function updateCurrentCallStatus () {
+  switch (getPhoneCallStatus()) {
+    case 0:
+      currentCallStatus = 'Connected'
+      break
+    case 1:
+      currentCallStatus = 'Dialing...'
+      break
+    case 7:
+      currentCallStatus = 'Disconnected'
+      break
+    case 9:
+      currentCallStatus = 'Connecting...'
+      break
+    case 10:
+      currentCallStatus = 'Disconnecting...'
+      break
+    default:
+      currentCallStatus = 'Unable to retrieve call status'
   }
 }
