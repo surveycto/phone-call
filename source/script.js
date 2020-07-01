@@ -2,8 +2,8 @@
 
 // Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
-var phoneNumberLabel = getPluginParameter('phone_number_label');
-var hidePhoneNumber = getPluginParameter('hide_phone_number');
+var phoneNumberLabel = getPluginParameter('phone_number_label')
+var hidePhoneNumber = getPluginParameter('hide_phone_number')
 
 // Get information about the current device
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
@@ -16,7 +16,7 @@ var errorMsgContainer = document.getElementById('error-message-container')
 var errorMsg = document.getElementById('error-message')
 
 // Set up other vars
-var timer = null;
+var timer = null
 
 // Error cases
 if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
