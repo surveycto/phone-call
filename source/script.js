@@ -127,8 +127,16 @@ function makeGenericCall () {
 
 // Define how to store the response
 function saveResponse (result) {
-  if (result === 'success') {
+  if (result === 'success' && (hidePhoneNumber !== 1 && hidePhoneNumber !== '1')) {
     var successResponse = '[' + new Date().toLocaleString() + '] The following phone number was called: ' + phoneNumber + '.\n'
+    currentAnswer += successResponse
+    setAnswer(currentAnswer)
+  } else if (result === 'success' && phoneNumberLabel) {
+    var successResponse = '[' + new Date().toLocaleString() + '] The following phone number was called: ' + phoneNumberLabel + '.\n'
+    currentAnswer += successResponse
+    setAnswer(currentAnswer)
+  } else if (result === 'success') {
+    var successResponse = '[' + new Date().toLocaleString() + '] The following phone number was called: (Number hidden).\n'
     currentAnswer += successResponse
     setAnswer(currentAnswer)
   } else {
