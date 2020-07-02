@@ -22,9 +22,9 @@ var timer = null
 var currentAnswer = fieldProperties.CURRENT_ANSWER || ''
 
 // Error cases
-if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
+if (!isAndroid && (hidePhoneNumber === 1 || hidePhoneNumber === '1')) { // If the platform is not Android, then we cannot support making phone calls with the number hidden.
   btnCallPhone.disabled = true // Disable the call button.
-  errorMsg.innerHTML = 'Sorry, the phone call feature is only supported on Android. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
+  errorMsg.innerHTML = 'Sorry, this phone call cannot be made using this platform. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
   errorMsgContainer.classList.remove('hidden') // Show the error message.
 } else if (!phoneNumber || phoneNumber.length < 1) { // If there is no phone number provided, then we won't be able to make a call.
   btnCallPhone.disabled = true
@@ -43,6 +43,11 @@ if (phoneNumber) {
   } else {
     targetPhoneNum.innerHTML = phoneNumber // The default case is to just show the destination phone number.
   }
+}
+
+// For non-Android platforms, set up the button to use a structured URL (as long as we're allowed to show the phone number).
+if (!isAndroid && (hidePhoneNumber !== 1 && hidePhoneNumber !== '1')) {
+  btnCallPhone.setAttribute('href', 'tel:' + phoneNumber)
 }
 
 function setUpCall () {
@@ -81,33 +86,42 @@ if (getPhoneCallStatus() !== -1) {
 // Define what the 'CALL' button does.
 btnCallPhone.onclick = function () {
   if (isAndroid) {
-    // Set the parameters for the call.
-    var params = {
-      phone_number: phoneNumber,
-      phone_number_label: phoneNumberLabel,
-      hide_phone_number: hidePhoneNumber
-    }
-    // Make the phone call.
-    makePhoneCall(params, function (error) {
-      // Some error occurred.
-      if (error) {
-        saveResponse(error)
-        statusContainer.parentElement.classList.remove('text-green')
-        statusContainer.innerHTML = error
-        return
-      } else {
-        saveResponse('success')
-      }
-      // Update the call UI every second.
-      setUpCall()
-      statusContainer.parentElement.classList.remove('text-green')
-      statusContainer.innerHTML = 'Connecting...'
-    })
+    makeAndroidCall()
   } else {
-    btnCallPhone.setAttribute('href', 'tel:' + phoneNumber)
-    btnCallPhone.onclick = function () {
+    makeGenericCall()
+  }
+}
+
+// Define how Android devices should make calls.
+function makeAndroidCall () {
+  // Set the parameters for the call.
+  var params = {
+    phone_number: phoneNumber,
+    phone_number_label: phoneNumberLabel,
+    hide_phone_number: hidePhoneNumber
+  }
+  // Make the phone call.
+  makePhoneCall(params, function (error) {
+    // Some error occurred.
+    if (error) {
+      saveResponse(error)
+      statusContainer.parentElement.classList.remove('text-green')
+      statusContainer.innerHTML = error
+      return
+    } else {
       saveResponse('success')
     }
+    // Update the call UI every second.
+    setUpCall()
+    statusContainer.parentElement.classList.remove('text-green')
+    statusContainer.innerHTML = 'Connecting...'
+  })
+}
+
+// Define what happens when non-Android platforms make calls.
+function makeGenericCall () {
+  btnCallPhone.onclick = function () {
+    saveResponse('success')
   }
 }
 
@@ -124,6 +138,7 @@ function saveResponse (result) {
   }
 }
 
+// Translate phone states
 // Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
 function updateCurrentCallStatus () {
   switch (getPhoneCallStatus()) {
