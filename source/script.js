@@ -79,7 +79,6 @@ if (getPhoneCallStatus() !== -1) {
   setUpCall()
   updateCallUI()
 } else {
-  statusContainer.parentElement.classList.add('text-green')
   statusContainer.innerHTML = 'Ready to call'
 }
 
@@ -105,7 +104,6 @@ function makeAndroidCall () {
     // Some error occurred.
     if (error) {
       saveResponse(error)
-      statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = error
       return
     } else {
@@ -113,7 +111,6 @@ function makeAndroidCall () {
     }
     // Update the call UI every second.
     setUpCall()
-    statusContainer.parentElement.classList.remove('text-green')
     statusContainer.innerHTML = 'Connecting...'
   })
 }

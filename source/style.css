@@ -1,4 +1,15 @@
-/* Global styles */
+/* Destination */
+#target-phone-number {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+/* Call status */
+#status-container {
+	text-transform: uppercase;
+}
+
+/* START global styles */
 .container {
 	padding: 0 .5rem;
 }
@@ -11,7 +22,7 @@
 	justify-content: center;
 }
 .hidden {
-	display: none;
+	display: none !important;
 }
 .noselect {
   -webkit-touch-callout: none; /* iOS Safari */
@@ -22,24 +33,9 @@
             user-select: none; /* Non-prefixed version, currently
                                   supported by Chrome, Opera and Firefox */
 }
+/* END global styles */
 
-/* Text styles */
-.text-green {
-	color: #599B23;
-}
-
-/* Destination */
-#target-phone-number {
-	font-size: 2rem;
-	font-weight: bold;
-}
-
-/* Call status */
-#status-container {
-	text-transform: uppercase;
-}
-
-/* Button styles */
+/* START button styles */
 a.button {
 	padding: 18px;
 	border: 0px solid rgba(0,0,0,0);
@@ -82,12 +78,8 @@ a.button.btn-danger {
 a.button.btn-danger .icon * {
 	fill: white;
 }
-a.button:active {
-	position:relative;
-	top:1px;
-}
 a.button:disabled {
 	opacity: 0.5
 }
-
+/* END button styles */
 
