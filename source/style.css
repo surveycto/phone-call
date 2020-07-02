@@ -1,4 +1,21 @@
-/* Global styles */
+/* Destination */
+#target-phone-number {
+	font-size: 2rem;
+	font-weight: bold;
+}
+
+/* Call status */
+#status-container {
+	text-transform: uppercase;
+}
+
+/* Error messages */
+#error-message {
+	color: red;
+	font-weight: bold;
+}
+
+/* START global styles */
 .container {
 	padding: 0 .5rem;
 }
@@ -11,27 +28,21 @@
 	justify-content: center;
 }
 .hidden {
-	display: none;
+	display: none !important;
 }
-
-/* Text styles */
-.text-green {
-	color: #599B23;
+.noselect {
+  -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Old versions of Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
 }
+/* END global styles */
 
-/* Destination */
-#target-phone-number {
-	font-size: 2rem;
-	font-weight: bold;
-}
-
-/* Call status */
-#status-container {
-	text-transform: uppercase;
-}
-
-/* Button styles */
-button {
+/* START button styles */
+a.button {
 	padding: 18px;
 	border: 0px solid rgba(0,0,0,0);
 	border-radius: 28px;
@@ -44,34 +55,39 @@ button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	text-decoration: none;
 }
-button>* {
-	margin: 0 10px;
-}
-button .icon {
-	width: 18px;
-	height: 18px;
-}
-button.btn-primary {
-	color: white;
+a.button:hover {
 	background-color: #047CC2;
 }
-button.btn-primary .icon * {
-	fill: white;
-}
-button.btn-danger {
-	color: white;
-	background-color: #B00020;
-}
-button.btn-danger .icon * {
-	fill: white;
-}
-button:active {
+a.button:active {
 	position:relative;
 	top:1px;
 }
-button:disabled {
-	opacity: 0.5
+a.button>* {
+	margin: 0 10px;
 }
-
+a.button .icon {
+	width: 18px;
+	height: 18px;
+}
+a.button.btn-primary {
+	color: white;
+	background-color: #047CC2;
+}
+a.button.btn-primary .icon * {
+	fill: white;
+}
+a.button.btn-danger {
+	color: white;
+	background-color: #B00020;
+}
+a.button.btn-danger .icon * {
+	fill: white;
+}
+a.button.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
+}
+/* END button styles */
 
