@@ -53,7 +53,7 @@ function updateCallUI () {
   updateCurrentCallStatus()
   statusContainer.innerHTML = currentCallStatus
   var currentCallStatusCode = getPhoneCallStatus()
-  if (currentCallStatusCode === 1 || currentCallStatusCode === 9 || currentCallStatusCode === 10) {
+  if (currentCallStatusCode === 1 || currentCallStatusCode === 2 || currentCallStatusCode === 8 || currentCallStatusCode === 9 || currentCallStatusCode === 10 || currentCallStatusCode === 11 || currentCallStatusCode === 13) {
     btnCallPhone.classList.add('hidden') // If the call state is dialing, connecting, or disconnecting, then hide the Call button.
   } else {
     btnCallPhone.classList.remove('hidden') // If the call state is not one of those three, make sure the call button is shown.
