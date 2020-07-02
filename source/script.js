@@ -3,7 +3,7 @@
 // Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
 var phoneNumberLabel = getPluginParameter('phone_number_label')
-var hidePhoneNumber = getPluginParameter('hide_phone_number')
+var hidePhoneNumberParam = getPluginParameter('hide_phone_number')
 
 // Get information about the current device
 var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
@@ -20,9 +20,10 @@ var errorMsg = document.getElementById('error-message')
 // Set up other vars
 var timer = null
 var currentAnswer = fieldProperties.CURRENT_ANSWER || ''
+var hidePhoneNumberBool = (hidePhoneNumberParam === 1 || hidePhoneNumberParam === '1')
 
 // Error cases
-if (!isAndroid && (hidePhoneNumber === 1 || hidePhoneNumber === '1')) { // If the platform is not Android, then we cannot support making phone calls with the number hidden.
+if (!isAndroid && hidePhoneNumberBool) { // If the platform is not Android, then we cannot support making phone calls with the number hidden.
   btnCallPhone.disabled = true // Disable the call button.
   errorMsg.innerHTML = 'Sorry, this phone call cannot be made using this platform. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
   errorMsgContainer.classList.remove('hidden') // Show the error message.
@@ -34,7 +35,7 @@ if (!isAndroid && (hidePhoneNumber === 1 || hidePhoneNumber === '1')) { // If th
 
 // Show where the call is going. Hide the phone number as needed, based on the parameters.
 if (phoneNumber) {
-  if (hidePhoneNumber === 1 || hidePhoneNumber === '1') {
+  if (hidePhoneNumberBool) {
     if (!phoneNumberLabel || phoneNumberLabel.length < 1) {
       targetPhoneNum.innerHTML = '(Number hidden)' // If hide_phone_number is set to 1 but there is no phone_number_label provided, show '(Number hidden)'.
     } else {
@@ -46,7 +47,7 @@ if (phoneNumber) {
 }
 
 // For non-Android platforms, set up the button to use a structured URL (as long as we're allowed to show the phone number).
-if (!isAndroid && (hidePhoneNumber !== 1 && hidePhoneNumber !== '1')) {
+if (!isAndroid && !hidePhoneNumberBool) {
   btnCallPhone.setAttribute('href', 'tel:' + phoneNumber)
 }
 
@@ -97,7 +98,7 @@ function makeAndroidCall () {
   var params = {
     phone_number: phoneNumber,
     phone_number_label: phoneNumberLabel,
-    hide_phone_number: hidePhoneNumber
+    hide_phone_number: hidePhoneNumberParam
   }
   // Make the phone call.
   makePhoneCall(params, function (error) {
@@ -124,7 +125,7 @@ function makeGenericCall () {
 
 // Define how to store the response
 function saveResponse (result) {
-  if (result === 'success' && (hidePhoneNumber !== 1 && hidePhoneNumber !== '1')) {
+  if (result === 'success' && !hidePhoneNumberBool) {
     var successResponse = '[' + new Date().toLocaleString() + '] The following phone number was called: ' + phoneNumber + '.\n'
     currentAnswer += successResponse
     setAnswer(currentAnswer)
