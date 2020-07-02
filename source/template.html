@@ -34,10 +34,12 @@
       <span id="status-container"></span>
   </div>
   <div class="row center phone-call-action-container">
-      <button {{#READONLY}}disabled{{/READONLY}} class="btn-primary" id="btn-call-phone">
+    <a class="btn-primary button noselect" {{#READONLY}}disabled{{/READONLY}} id="btn-call-phone" dir="auto">
       <svg class="icon"><use xlink:href="#icon-make-call" /></svg>
+      <span id="call-btn-txt">
         CALL
-      </button>
+      </span>
+    </a>
   </div>
 
   <!-- This is the error message area. Check script.js for potential error cases and their messages. -->
