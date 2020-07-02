@@ -97,6 +97,11 @@ btnCallPhone.onclick = function () {
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
     })
+  } else {
+    btnCallPhone.setAttribute('href', 'tel:' + phoneNumber)
+    btnCallPhone.onclick = function () {
+      saveResponse('success')
+    }
   }
 }
 
