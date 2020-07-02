@@ -49,6 +49,7 @@ a.button {
 	display: flex;
 	align-items: center;
 	justify-content: center;
+	text-decoration: none;
 }
 a.button:hover {
 	background-color: #047CC2;
