@@ -4,7 +4,7 @@
 
 ## Description
 
-Use this field plug-in if you would like to make a phone call within your form. Simply supply a valid phone number as a parameter (see the sample form for an example), and this field plug-in will allow you to dial that phone number automatically. For the best results (and more features), use Collect v2.70.4 or later for Android with Collect set as the default phone app.
+Use this field plug-in if you would like to make a phone call within your form. Simply supply a valid phone number as a parameter (see the [sample form](https://github.com/surveycto/phone-call/raw/master/extras/sample-form/Phone%20call%20sample%20form.xlsx) for an example), and this field plug-in will allow you to dial that phone number automatically. For the best results (and more features), use Collect v2.70.4 or later for Android with Collect set as the default phone app.
 
 [![Download now](extras/download-button.png)](https://github.com/surveycto/phone-call/raw/master/phone-call.fieldplugin.zip)
 
@@ -20,7 +20,7 @@ Use this field plug-in if you would like to make a phone call within your form. 
 | Key | Value |
 | --- | --- |
 | `phone_number` (required) | The phone number to dial. |
-| `hide_phone_number` (optional) | Set this to `1` to hide the phone number from the user. If this is enabled, calls can only be made on Android while _Collect_ is the default phone app. Setting this to `1` will disable this field for iOS and web. |
+| `hide_phone_number` (optional) | Set this to `1` to hide the phone number from the user. If this is enabled, calls can only be made on Android while _Collect_ is the default phone app. Setting this to `1` will disable the Call button for iOS and web. |
 | `phone_number_label` (optional) | Supply an alternate label to use for the phone number when `hide_phone_number=1`. |
 
 ## How the response is stored
@@ -49,7 +49,9 @@ Use this field plug-in if you would like to make a phone call within your form. 
 ## More resources
 
 * **Sample form**  
-[extras/sample-form](https://github.com/surveycto/phone-call/raw/master/extras/sample-form/Phone%20call%20sample%20form.xlsx)
+[extras/sample-form/Phone call sample form.xlsx](https://github.com/surveycto/phone-call/raw/master/extras/sample-form/Phone%20call%20sample%20form.xlsx)
+* **Sample form with audio audit**  
+[extras/sample-form/Phone call sample form with audio audit.xlsx](https://github.com/surveycto/phone-call/raw/master/extras/sample-form/Phone%20call%20sample%20form%20with%20audio%20audit.xlsx)
 * **Developer documentation**  
 Instructions and resources for developing your own field plug-ins.  
 [https://github.com/surveycto/Field-plug-in-resources](https://github.com/surveycto/Field-plug-in-resources)
