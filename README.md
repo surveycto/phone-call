@@ -6,7 +6,7 @@
 
 Use this field plug-in if you would like to make a phone call as part of your form. If you are using Collect v2.70.4 or later for Android, this phone call can be made directly within the app.
 
-[![Download now](extras/download-button.png)](https://github.com/surveycto/call-phone-number/raw/master/call-phone-number.fieldplugin.zip)
+[![Download now](extras/download-button.png)](https://github.com/surveycto/phone-call/raw/master/phone-call.fieldplugin.zip)
 
 ## Features
 
