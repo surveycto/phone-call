@@ -1,4 +1,4 @@
-/* global getPluginParameter, setAnswer, makePhoneCall, getPhoneCallStatus */
+/* global getPluginParameter, setAnswer, makePhoneCall, getPhoneCallStatus, fieldProperties */
 
 // Get parameters info from the form definition
 var phoneNumber = getPluginParameter('phone_number')
@@ -18,6 +18,7 @@ var errorMsg = document.getElementById('error-message')
 
 // Set up other vars
 var timer = null
+var currentAnswer = fieldProperties.CURRENT_ANSWER || ''
 
 // Error cases
 if (!isAndroid) { // If the platform is not Android, then the calling function will not be supported.
@@ -84,15 +85,31 @@ btnCallPhone.onclick = function () {
     makePhoneCall(params, function (error) {
       // Some error occurred.
       if (error) {
+        saveResponse(error)
         statusContainer.parentElement.classList.remove('text-green')
         statusContainer.innerHTML = error
         return
+      } else {
+        saveResponse('success')
       }
       // Update the call UI every second.
       setUpCall()
       statusContainer.parentElement.classList.remove('text-green')
       statusContainer.innerHTML = 'Connecting...'
     })
+  }
+}
+
+// Define how to store the response
+function saveResponse (result) {
+  if (result === 'success') {
+    var successResponse = '[' + new Date().toLocaleString() + '] The following phone number was called: ' + phoneNumber + '.\n'
+    currentAnswer += successResponse
+    setAnswer(currentAnswer)
+  } else {
+    var failResponse = '[' + new Date().toLocaleString() + '] Failure calling the following phone number: ' + phoneNumber + '.\n'
+    currentAnswer += failResponse
+    setAnswer(currentAnswer)
   }
 }
 
