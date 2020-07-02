@@ -25,10 +25,12 @@ var hidePhoneNumberBool = (hidePhoneNumberParam === 1 || hidePhoneNumberParam ==
 // Error cases
 if (!isAndroid && hidePhoneNumberBool) { // If the platform is not Android, then we cannot support making phone calls with the number hidden.
   btnCallPhone.disabled = true // Disable the call button.
+  btnCallPhone.classList.add('disabled')
   errorMsg.innerHTML = 'Sorry, this phone call cannot be made using this platform. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
   errorMsgContainer.classList.remove('hidden') // Show the error message.
 } else if (!phoneNumber || phoneNumber.length < 1) { // If there is no phone number provided, then we won't be able to make a call.
   btnCallPhone.disabled = true
+  btnCallPhone.classList.add('disabled')
   errorMsg.innerHTML = 'Sorry, there was no phone number provided, so a call cannot be made.'
   errorMsgContainer.classList.remove('hidden')
 }

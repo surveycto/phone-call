@@ -9,6 +9,12 @@
 	text-transform: uppercase;
 }
 
+/* Error messages */
+#error-message {
+	color: red;
+	font-weight: bold;
+}
+
 /* START global styles */
 .container {
 	padding: 0 .5rem;
@@ -79,8 +85,9 @@ a.button.btn-danger {
 a.button.btn-danger .icon * {
 	fill: white;
 }
-a.button:disabled {
-	opacity: 0.5
+a.button.disabled {
+	opacity: 0.5;
+	cursor: not-allowed;
 }
 /* END button styles */
 
