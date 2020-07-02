@@ -11,6 +11,7 @@ var isAndroid = (document.body.className.indexOf('android-collect') >= 0)
 // Get UI elements
 var targetPhoneNum = document.getElementById('target-phone-number')
 var btnCallPhone = document.getElementById('btn-call-phone')
+var callBtnTxt = document.getElementById('call-btn-txt')
 var statusContainer = document.getElementById('status-container')
 var currentCallStatus = 'Ready to call'
 var errorMsgContainer = document.getElementById('error-message-container')
@@ -57,6 +58,11 @@ function updateCallUI () {
     btnCallPhone.classList.add('hidden') // If the call state is dialing, connecting, or disconnecting, then hide the Call button.
   } else {
     btnCallPhone.classList.remove('hidden') // If the call state is not one of those three, make sure the call button is shown.
+    if (currentCallStatusCode === 0 || currentCallStatusCode === 3 || currentCallStatusCode === 12) {
+      callBtnTxt.innerHTML = 'ADD CALL' // If there is an ongoing call, change the button text to 'ADD CALL'
+    } else {
+      callBtnTxt.innerHTML = 'CALL' // Otherwise, revert the button text to 'CALL'
+    }
   }
   if (currentCallStatusCode === 7) {
     clearInterval(timer) // If the call is disconnected, we no longer need to update the UI every second.
