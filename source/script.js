@@ -64,6 +64,7 @@ function updateCallUI () {
   var currentCallStatusCode = getPhoneCallStatus()
   if (currentCallStatusCode === 7 || currentCallStatusCode === -1) {
     clearInterval(timer) // If the call is disconnected, we no longer need to update the UI every second.
+    btnCallPhone.classList.remove('hidden')
   }
 }
 
