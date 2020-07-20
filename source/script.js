@@ -62,8 +62,9 @@ function updateCallUI () {
   updateCurrentCallStatus()
   statusContainer.innerHTML = currentCallStatus
   var currentCallStatusCode = getPhoneCallStatus()
-  if (currentCallStatusCode === 7 || currentCallStatusCode === -1) {
-    clearInterval(timer) // If the call is disconnected, we no longer need to update the UI every second.
+  if (currentCallStatusCode === -1) {
+    clearInterval(timer) // If there's no active call, we no longer need to update the UI every second.
+    callBtnTxt.innerHTML = 'CALL' // Set the button text back to normal, in case it had been changed to 'ADD CALL'
     btnCallPhone.classList.remove('hidden')
   }
 }
