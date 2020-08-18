@@ -134,7 +134,14 @@ function saveResponse (result) {
     currentAnswer += successResponse
     setAnswer(currentAnswer)
   } else {
-    var failResponse = '[' + new Date().toLocaleString() + '] Failure calling the following phone number: ' + phoneNumber + '.\n'
+    var failResponse = '[' + new Date().toLocaleString() + '] Failure calling the following phone number: '
+    if (!hidePhoneNumberBool) {
+      failResponse += phoneNumber + '.\n'
+    } else if (phoneNumberLabel) {
+      failResponse += phoneNumberLabel + '.\n'
+    } else {
+      failResponse += '(Number hidden) .\n'
+    }
     currentAnswer += failResponse
     setAnswer(currentAnswer)
   }
