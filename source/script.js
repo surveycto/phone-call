@@ -59,25 +59,39 @@ function setUpCall () {
 }
 
 function updateCallUI () {
-  updateCurrentCallStatus()
-  statusContainer.innerHTML = currentCallStatus
-  var currentCallStatusCode = getPhoneCallStatus()
-  if (currentCallStatusCode === -1) {
-    clearInterval(timer) // If there's no active call, we no longer need to update the UI every second.
-    callBtnTxt.innerHTML = 'CALL' // Set the button text back to normal, in case it had been changed to 'ADD CALL'
-    btnCallPhone.classList.remove('hidden')
-  }
+	if(isAndroid) {
+		// If the platform is Android, we can update the UI based on the current call status.
+		updateCurrentCallStatus()
+		statusContainer.innerHTML = currentCallStatus
+		var currentCallStatusCode = getPhoneCallStatus()
+		if (currentCallStatusCode === -1) {
+			clearInterval(timer) // If there's no active call, we no longer need to update the UI every second.
+			callBtnTxt.innerHTML = 'CALL' // Set the button text back to normal, in case it had been changed to 'ADD CALL'
+			btnCallPhone.classList.remove('hidden')
+		}
+	} else {
+		// If the platform is not Android, then the call status is unavailable, so we treat it as if there is no active call.
+		clearInterval(timer)
+		callBtnTxt.innerHTML = 'CALL'
+		btnCallPhone.classList.remove('hidden')
+	}
 }
 
-// When loading, if there's an active call in progress, make sure to update UI.
-if (getPhoneCallStatus() !== -1) {
-  setUpCall()
-  updateCallUI()
-  callBtnTxt.innerHTML = 'ADD CALL'
-  btnCallPhone.classList.remove('hidden')
+// When loading, if the platform is Android, we should check the call status to see if we need to update the UI.
+if(isAndroid) {
+	if (getPhoneCallStatus() !== -1) {
+		//  If there's an active call in progress, make sure to update UI.
+		setUpCall()
+		updateCallUI()
+		callBtnTxt.innerHTML = 'ADD CALL'
+		btnCallPhone.classList.remove('hidden')
+	} else {
+		statusContainer.innerHTML = 'Ready to call'
+	}
 } else {
-  statusContainer.innerHTML = 'Ready to call'
+	statusContainer.innerHTML = 'Ready to call'
 }
+
 
 // Define what the 'CALL' button does.
 btnCallPhone.onclick = function () {
@@ -148,37 +162,45 @@ function saveResponse (result) {
 }
 
 // Translate phone states
-// Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
 function updateCurrentCallStatus () {
-  switch (getPhoneCallStatus()) {
-    case -1: // Collect will return -1 when there is no call state
-      currentCallStatus = 'Ready to make a call'
-      break
-    case 8: // STATE_SELECT_PHONE_ACCOUNT
-    case 9: // STATE_CONNECTING
-    case 11: // STATE_PULLING_CALL
-      currentCallStatus = 'Connecting...'
-      break
-    case 1: // STATE_DIALING
-      currentCallStatus = 'Dialing...'
-      break
-    case 2: // STATE_RINGING
-    case 13: // STATE_SIMULATED_RINGING
-      currentCallStatus = 'Ringing...'
-      break
-    case 0: // STATE_NEW
-    case 3: // STATE_HOLDING
-    case 4: // STATE_ACTIVE
-    case 12: // STATE_AUDIO_PROCESSING
-      currentCallStatus = 'Connected'
-      break
-    case 10: // STATE_DISCONNECTING
-      currentCallStatus = 'Disconnecting...'
-      break
-    case 7: // STATE_DISCONNECTED
-      currentCallStatus = 'Disconnected'
-      break
-    default:
-      currentCallStatus = 'Unable to retrieve call status'
-  }
+	if(isAndroid) { 
+		// If the platform is Android, the call state can be accessed via getPhoneCallStatus().
+		// Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. 
+		// See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
+		switch (getPhoneCallStatus()) {
+			case -1: // Collect will return -1 when there is no call state
+				currentCallStatus = 'Ready to make a call'
+				break
+			case 8: // STATE_SELECT_PHONE_ACCOUNT
+			case 9: // STATE_CONNECTING
+			case 11: // STATE_PULLING_CALL
+				currentCallStatus = 'Connecting...'
+				break
+			case 1: // STATE_DIALING
+				currentCallStatus = 'Dialing...'
+				break
+			case 2: // STATE_RINGING
+			case 13: // STATE_SIMULATED_RINGING
+				currentCallStatus = 'Ringing...'
+				break
+			case 0: // STATE_NEW
+			case 3: // STATE_HOLDING
+			case 4: // STATE_ACTIVE
+			case 12: // STATE_AUDIO_PROCESSING
+				currentCallStatus = 'Connected'
+				break
+			case 10: // STATE_DISCONNECTING
+				currentCallStatus = 'Disconnecting...'
+				break
+			case 7: // STATE_DISCONNECTED
+				currentCallStatus = 'Disconnected'
+				break
+			default:
+				currentCallStatus = 'Unable to retrieve call status'
+		}
+	} else {
+		// If the platform is not Android, getPhoneCallStatus() is unavailable, so we just set it as a static value.
+		currentCallStatus = 'Ready to make a call'
+	}
+  
 }
