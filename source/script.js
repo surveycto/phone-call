@@ -22,17 +22,23 @@ var timer = null
 var currentAnswer = fieldProperties.CURRENT_ANSWER || ''
 var hidePhoneNumberBool = (hidePhoneNumberParam === 1 || hidePhoneNumberParam === '1')
 
-// Error cases
+// Error cases (cases in which a call cannot be made)
 if (!isAndroid && hidePhoneNumberBool) { // If the platform is not Android, then we cannot support making phone calls with the number hidden.
   btnCallPhone.disabled = true // Disable the call button.
   btnCallPhone.classList.add('disabled')
+  currentCallStatus = ''
   errorMsg.innerHTML = 'Sorry, this phone call cannot be made using this platform. Please open this form using SurveyCTO Collect for Android.' // Write the appropriate error message
   errorMsgContainer.classList.remove('hidden') // Show the error message.
 } else if (!phoneNumber || phoneNumber.length < 1) { // If there is no phone number provided, then we won't be able to make a call.
   btnCallPhone.disabled = true
   btnCallPhone.classList.add('disabled')
+  currentCallStatus = ''
   errorMsg.innerHTML = 'Sorry, there was no phone number provided, so a call cannot be made.'
   errorMsgContainer.classList.remove('hidden')
+} else if (fieldProperties.READONLY === true) {
+  btnCallPhone.disabled = true
+  btnCallPhone.classList.add('disabled')
+  currentCallStatus = 'This field is currently read-only.'
 }
 
 // Show where the call is going. Hide the phone number as needed, based on the parameters.
@@ -48,8 +54,8 @@ if (phoneNumber) {
   }
 }
 
-// For non-Android platforms, set up the button to use a structured URL (as long as we're allowed to show the phone number).
-if (!isAndroid && !hidePhoneNumberBool) {
+// For non-Android platforms, set up the button to use a structured URL (as long as we're allowed to make a call).
+if (!isAndroid && !hidePhoneNumberBool && btnCallPhone.disabled !== true) {
   btnCallPhone.setAttribute('href', 'tel:' + phoneNumber)
 }
 
@@ -70,35 +76,39 @@ function updateCallUI () {
 			btnCallPhone.classList.remove('hidden')
 		}
 	} else {
-		// If the platform is not Android, then the call status is unavailable, so we treat it as if there is no active call.
+		// For platforms other than Android, the call status is unavailable, so we just set it statically
 		clearInterval(timer)
 		callBtnTxt.innerHTML = 'CALL'
 		btnCallPhone.classList.remove('hidden')
+    statusContainer.innerHTML = currentCallStatus
 	}
 }
 
-// When loading, if the platform is Android, we should check the call status to see if we need to update the UI.
+// When loading, if the platform is Android, we should check the call status to see if we need to update the UI right away.
 if(isAndroid) {
 	if (getPhoneCallStatus() !== -1) {
-		//  If there's an active call in progress, make sure to update UI.
+		//  If there's an active call in progress, set up the call and update the UI
 		setUpCall()
 		updateCallUI()
 		callBtnTxt.innerHTML = 'ADD CALL'
 		btnCallPhone.classList.remove('hidden')
 	} else {
-		statusContainer.innerHTML = 'Ready to call'
+    // If there's no active call in progress, just set the status text
+		statusContainer.innerHTML = currentCallStatus
 	}
 } else {
-	statusContainer.innerHTML = 'Ready to call'
+  // If the platform is not Android, then call status is unavailable, so no need to check it. Just update the UI.
+  updateCallUI ()
 }
 
-
 // Define what the 'CALL' button does.
-btnCallPhone.onclick = function () {
-  if (isAndroid) {
-    makeAndroidCall()
-  } else {
-    makeGenericCall()
+if (btnCallPhone.disabled !== true) {
+  btnCallPhone.onclick = function () {
+    if (isAndroid) {
+      makeAndroidCall()
+    } else {
+      makeGenericCall()
+    }
   }
 }
 
@@ -163,7 +173,7 @@ function saveResponse (result) {
 
 // Translate phone states
 function updateCurrentCallStatus () {
-	if(isAndroid) { 
+	if(isAndroid && fieldProperties.READONLY === false) {
 		// If the platform is Android, the call state can be accessed via getPhoneCallStatus().
 		// Since getPhoneCallStatus() will return integer values, we need to provide human-readable translations. 
 		// See https://developer.android.com/reference/android/telecom/Call#STATE_ACTIVE for more details.
@@ -198,9 +208,7 @@ function updateCurrentCallStatus () {
 			default:
 				currentCallStatus = 'Unable to retrieve call status'
 		}
-	} else {
-		// If the platform is not Android, getPhoneCallStatus() is unavailable, so we just set it as a static value.
-		currentCallStatus = 'Ready to make a call'
+	} else if (fieldProperties.READONLY === true) {
+		currentCallStatus = 'This field is currently read-only.'
 	}
-  
 }
